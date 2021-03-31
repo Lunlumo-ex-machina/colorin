@@ -1,6 +1,4 @@
 project('colorin', 'c', license: 'MIT')
-cc = meson.get_compiler('c')
-m_dep = cc.find_library('m')
 inc = include_directories('include')
 subdir('util')
 subdir('src')

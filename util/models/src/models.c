@@ -1,15 +1,5 @@
 #include "models.h"
 
-rgb_t init_rgb(uint32_t hex) {
-	rgb_t rgb;
-	rgb.b = hex & 0xFF;
-	hex >>= 8;
-	rgb.g = hex & 0xFF;
-	hex >>= 8;
-	rgb.r = hex & 0xFF;
-	return rgb;
-}
-
 float max(float n1, float n2, float n3) {
 	if (n1 > n2) {
 		return n1 > n3? n1: n3;
@@ -26,6 +16,15 @@ float min(float n1, float n2, float n3) {
 	}
 }
 
+rgb_t init_rgb(uint32_t hex) {
+	rgb_t rgb;
+	rgb.b = hex & 0xFF;
+	hex >>= 8;
+	rgb.g = hex & 0xFF;
+	hex >>= 8;
+	rgb.r = hex & 0xFF; return rgb;
+}
+
 hsl_t rgb_to_hsl(const rgb_t *rgb) {
 	hsl_t hsl;
 	float r = rgb->r / 255.0;
@@ -38,7 +37,7 @@ hsl_t rgb_to_hsl(const rgb_t *rgb) {
 	if (c == 0) {
 		hsl.h = 0;
 	} else if (M == r) {
-		hsl.h = fmodf(((g - b) / c), 6);
+		hsl.h = ((g - b) / c);
 	} else if (M == g) {
 		hsl.h = ((b - r) / c) + 2;
 	} else {
@@ -57,7 +56,8 @@ hsl_t rgb_to_hsl(const rgb_t *rgb) {
 	} else if (c == 0) {
 		hsl.s = 0;
 	} else {
-		hsl.s = c / (1 - fabsf(2*hsl.l-1));
+		int a = hsl.l < 0.5? -1: 1;
+		hsl.s = c / (1 - (2*hsl.l-1) * a);
 	}
 
 	return hsl;
@@ -75,7 +75,7 @@ hsv_t rgb_to_hsv(const rgb_t *rgb) {
 	if (c == 0) {
 		hsv.h = 0;
 	} else if (M == r) {
-		hsv.h = fmodf(((g - b) / c), 6);
+		hsv.h = ((g - b) / c);
 	} else if (M == g) {
 		hsv.h = ((b - r) / c) + 2;
 	} else {
@@ -94,7 +94,8 @@ hsv_t rgb_to_hsv(const rgb_t *rgb) {
 	} else if (c == 0) {
 		hsv.s = 0;
 	} else {
-		hsv.s = c / (1 - fabsf(2*hsv.v-1));
+		int a = hsv.v < 0.5? -1: 1;
+		hsv.s = c / (1 - (2*hsv.v-1) * a);
 	}
 
 	return hsv;
