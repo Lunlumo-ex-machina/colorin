@@ -4,5 +4,6 @@
 #include "models.h" // rgb, hsl, hsv, cmyk
 #include "args.h"
 #include <stdio.h> // printf
+#include <stdbool.h>
 
 #endif //COLOR_H

@@ -2,17 +2,17 @@
 
 float max(float n1, float n2, float n3) {
 	if (n1 > n2) {
-		return n1 > n3? n1: n3;
+		return (n1 > n3)? n1: n3;
 	} else {
-		return n2 > n3? n2: n3;
+		return (n2 > n3)? n2: n3;
 	}
 }
 
 float min(float n1, float n2, float n3) {
 	if (n1 < n2) {
-		return n1 < n3? n1: n3;
+		return (n1 < n3)? n1: n3;
 	} else {
-		return n2 < n3? n2: n3;
+		return (n2 < n3)? n2: n3;
 	}
 }
 
@@ -25,6 +25,22 @@ rgb_t init_rgb(uint32_t hex) {
 	rgb.r = hex & 0xFF; return rgb;
 }
 
+float get_hue(float r, float g, float b, float m, float M) {
+	float h = 0;
+	float c = M - m;
+	if (c == 0) {
+		h = 0;
+	} else if (M == r) {
+		h = ((g - b) / c);
+	} else if (M == g) {
+		h = ((b - r) / c) + 2;
+	} else {
+		h = ((r - g) / c) + 4;
+	}
+	h *= 60;
+	return (h < 0)? h + 360: h;
+}
+
 hsl_t rgb_to_hsl(const rgb_t *rgb) {
 	hsl_t hsl;
 	float r = rgb->r / 255.0;
@@ -34,26 +50,10 @@ hsl_t rgb_to_hsl(const rgb_t *rgb) {
 	float m = min(r, g, b);
 	float c = M - m;
 
-	if (c == 0) {
-		hsl.h = 0;
-	} else if (M == r) {
-		hsl.h = ((g - b) / c);
-	} else if (M == g) {
-		hsl.h = ((b - r) / c) + 2;
-	} else {
-		hsl.h = ((r - g) / c) + 4;
-	}
-	hsl.h *= 60;
-
-	if (hsl.h < 0) {
-		hsl.h += 360;
-	}
-
+	hsl.h = get_hue(r, g, b, m, M);
 	hsl.l = (M + m) / 2;
 
-	if ((hsl.l == 1) || (hsl.l == 0)) {
-		hsl.s = 0;
-	} else if (c == 0) {
+	if (hsl.l == 1 || hsl.l == 0 || c == 0) {
 		hsl.s = 0;
 	} else {
 		int a = hsl.l < 0.5? -1: 1;
@@ -72,31 +72,9 @@ hsv_t rgb_to_hsv(const rgb_t *rgb) {
 	float m = min(r, g, b);
 	float c = M - m;
 
-	if (c == 0) {
-		hsv.h = 0;
-	} else if (M == r) {
-		hsv.h = ((g - b) / c);
-	} else if (M == g) {
-		hsv.h = ((b - r) / c) + 2;
-	} else {
-		hsv.h = ((r - g) / c) + 4;
-	}
-	hsv.h *= 60;
-
-	if (hsv.h < 0) {
-		hsv.h += 360;
-	}
-
+	hsv.h = get_hue(r, g, b, m, M);
 	hsv.v = M;
-
-	if ((hsv.v == 1) || (hsv.v == 0)) {
-		hsv.s = 0;
-	} else if (c == 0) {
-		hsv.s = 0;
-	} else {
-		int a = hsv.v < 0.5? -1: 1;
-		hsv.s = c / (1 - (2*hsv.v-1) * a);
-	}
+	hsv.s = (hsv.v == 0 || c == 0)? 0: c / hsv.v;
 
 	return hsv;
 }

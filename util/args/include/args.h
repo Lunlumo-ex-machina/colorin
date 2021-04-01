@@ -3,7 +3,6 @@
 
 #include <argp.h> // Arguments parser
 #include <string.h> // strcmp
-#include <stdlib.h> // isnum
 #include <stdint.h> // int types
 
 typedef enum {
@@ -16,23 +15,24 @@ typedef enum {
 
 typedef struct {
 	model_t model;
-	uint32_t input;
+	char *input;
 } arguments_t;
 
 const static char doc[] = "Colorin\n"
+						  "\n"
 						  "Usage:\n"
-						  "  colorin [-m]\n"
+						  "  colorin [OPTIONS] <rgb hex>\n"
 						  "\n"
 						  "Options:\n"
 						  "\v"
 						  "Examples:\n"
-						  "  colorin aabbcc // Prints the color RGB #aabbcc in differents models (HSL, HSV and CMYK).\n"
+						  "  colorin aabbcc // Prints the color RGB #aabbcc in differents models.\n"
 						  "  colorin -m cmyk aabbcc// Prints only the cmyk model.\n"
 						  "\n"
-						  "Models avaliable: cmyk, hsl and hsv.\n"
+						  "Models available: cmyk, hsl and hsv.\n"
 						  "\n"
 						  "MIT License Copyright (c) 2021 Lunlumo";
-const static char arg_doc[] = "[OPTIONS...]";
+const static char arg_doc[] = "<rgb hex>";
 const struct argp_option options[] = {
 	{"help",   'h', 0,        0, "Display the help page.", -1},
 	{"usage",  'u', 0,        0, "Display usage.", -1},

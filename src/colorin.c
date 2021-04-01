@@ -24,7 +24,7 @@ void print_cmyk(const rgb_t *rgb) {
 }
 
 void print_color(const rgb_t *rgb) {
-	printf("\x1B[48;2;%d;%d;%dm%*s\x1B[m\n", rgb->r, rgb->g, rgb->b, 6, " ");
+	printf("Color: \x1B[48;2;%d;%d;%dm%*s\x1B[m\n", rgb->r, rgb->g, rgb->b, 6, " ");
 }
 
 void print_all(const rgb_t *rgb) {
@@ -34,6 +34,16 @@ void print_all(const rgb_t *rgb) {
 	print_cmyk(rgb);
 }
 
+bool ishex(const char *ch) {
+	for (int i = 0; *ch != '\0'; i++, ch++) {
+		if ((*ch < '0' || *ch > '9') &&
+			(*ch < 'a' || *ch > 'f') &&
+			(*ch < 'A' || *ch > 'F')) {
+			return false;
+		}
+	}
+	return true;
+}
 
 int main(int argc, char **argv) {
 
@@ -43,7 +53,12 @@ int main(int argc, char **argv) {
 
 	argp_parse(&argp, argc, argv, ARGP_NO_HELP, 0, &arguments);
 
-	rgb_t rgb = init_rgb(arguments.input);
+	if (strlen(arguments.input) != 6 || !ishex(arguments.input)) {
+		return 1;
+	}
+	uint32_t input = strtol(arguments.input, NULL, 16);
+
+	rgb_t rgb = init_rgb(input);
 
 	switch (arguments.model) {
 		case RGB:
