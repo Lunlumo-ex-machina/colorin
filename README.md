@@ -8,7 +8,7 @@
 
 Convert RGB into other models (HSL, HSV or CMYK).
 
-[!] Write the input in hexadecimal.
+[ ! ] Write the input in hexadecimal.
 
 ## Examples
 
