@@ -10,6 +10,6 @@ Convierte RGB en otros modelos (HSL, HSV or CMYK).
 
 ## Ejemplos
 
-![normal](imgs/normal.png)
+![normal](../imgs/normal.png)
 
-![cmyk](imgs/cmyk.png)
+![cmyk](../imgs/cmyk.png)
