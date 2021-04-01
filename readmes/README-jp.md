@@ -8,6 +8,8 @@
 
 RGBを他のモデルに変換します（HSL、HSV、CMYK）。
 
+[!] １６進数で入力を書いてください。
+
 ## Examples
 
 ![normal](../imgs/normal.png)

@@ -8,6 +8,8 @@
 
 Convierte RGB en otros modelos (HSL, HSV or CMYK).
 
+[!] Escribí la entrada en hexadecimal.
+
 ## Ejemplos
 
 ![normal](../imgs/normal.png)
