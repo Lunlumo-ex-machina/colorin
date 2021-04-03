@@ -12,6 +12,8 @@ Convierte RGB en otros modelos (HSL, HSV or CMYK).
 
 ## Ejemplos
 
-![normal](../imgs/normal.png)
+![simple](../imgs/simple.png)
 
-![cmyk](../imgs/cmyk.png)
+![all](../imgs/all.png)
+
+![snt](../imgs/snt.png)
