@@ -1,4 +1,5 @@
 #include "args.h"
+#include <argp.h>
 
 error_t parse_opt(int key, char *arg, struct argp_state *state) {
 	arguments_t *arguments = state->input;
@@ -10,7 +11,9 @@ error_t parse_opt(int key, char *arg, struct argp_state *state) {
 			argp_usage(state);
 			break;
 		case 'm':
-			if (!strcmp("rgb", arg)) {
+			if (!strcmp("all", arg)) {
+				arguments->model = ALL;
+			} else if (!strcmp("rgb", arg)) {
 				arguments->model = RGB;
 			} else if (!strcmp("hsl", arg)) {
 				arguments->model = HSL;
@@ -18,9 +21,17 @@ error_t parse_opt(int key, char *arg, struct argp_state *state) {
 				arguments->model = HSV;
 			} else if (!strcmp("cmyk", arg)) {
 				arguments->model = CMYK;
+			} else if (!strcmp("none", arg)){
+				arguments->model = NONE;
 			} else {
 				argp_usage(state);
 			}
+			break;
+		case 's':
+			arguments->shade = true;
+			break;
+		case 't':
+			arguments->tint = true;
 			break;
 		case ARGP_KEY_ARG:
 			if (state->arg_num > 1) {

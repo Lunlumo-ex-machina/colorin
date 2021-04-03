@@ -56,8 +56,7 @@ hsl_t rgb_to_hsl(const rgb_t *rgb) {
 	if (hsl.l == 1 || hsl.l == 0 || c == 0) {
 		hsl.s = 0;
 	} else {
-		int a = hsl.l < 0.5? -1: 1;
-		hsl.s = c / (1 - (2*hsl.l-1) * a);
+		hsl.s = c / (1 - fabsf(2*hsl.l-1));
 	}
 
 	return hsl;
@@ -87,4 +86,44 @@ cmyk_t rgb_to_cmyk(const rgb_t *rgb) {
 	cmyk.m = (1 - rgb->g / 255.f - cmyk.k) / k;
 	cmyk.y = (1 - rgb->b / 255.f - cmyk.k) / k;
 	return cmyk;
+}
+
+rgb_t hsl_to_rgb(const hsl_t *hsl) {
+	float r, g, b;
+	float c = (1 - fabsf(2*hsl->l-1)) * hsl->s;
+	float h = hsl->h / 60;
+	float x = c * (1 - fabsf(fmodf(h, 2) - 1));
+	float m = hsl->l - c / 2;
+
+	if (h < 1) {
+		r = c;
+		g = x;
+		b = 0;
+	} else if (h < 2) {
+		r = x;
+		g = c;
+		b = 0;
+	} else if (h < 3) {
+		r = 0;
+		g = c;
+		b = x;
+	} else if (h < 4) {
+		r = 0;
+		g = x;
+		b = c;
+	} else if (h < 5) {
+		r = x;
+		g = 0;
+		b = c;
+	} else if (h < 6) {
+		r = c;
+		g = 0;
+		b = x;
+	} else {
+		r = 0;
+		g = 0;
+		b = 0;
+	}
+
+	return (rgb_t){(r + m)*255, (g + m)*255, (b + m)*255};
 }

@@ -2,6 +2,7 @@
 #define MODELS_H
 
 #include <stdio.h>
+#include <math.h>
 #include <stdlib.h>
 #include <stdint.h>
 
@@ -34,5 +35,6 @@ rgb_t init_rgb(uint32_t hex);
 hsl_t rgb_to_hsl(const rgb_t *rgb);
 hsv_t rgb_to_hsv(const rgb_t *rgb);
 cmyk_t rgb_to_cmyk(const rgb_t *rgb);
+rgb_t hsl_to_rgb(const hsl_t *hsl);
 
 #endif

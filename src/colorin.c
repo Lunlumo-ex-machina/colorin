@@ -23,8 +23,14 @@ void print_cmyk(const rgb_t *rgb) {
 	printf("c: %.2f%%, m: %.2f%%, y: %.2f%%, k:%.2f%%\n", cmyk.c*100, cmyk.m*100, cmyk.y*100, cmyk.k*100);
 }
 
-void print_color(const rgb_t *rgb) {
-	printf("Color: \x1B[48;2;%d;%d;%dm%*s\x1B[m\n", rgb->r, rgb->g, rgb->b, 6, " ");
+void print_color(const rgb_t *rgb, uint8_t num) {
+	printf("\x1B[48;2;%d;%d;%dm%*s\x1B[m", rgb->r, rgb->g, rgb->b, num, " ");
+}
+
+void print_line(uint8_t num) {
+	for (int i = 0; i < num; i++) {
+		printf("-");
+	}
 }
 
 void print_all(const rgb_t *rgb) {
@@ -45,10 +51,71 @@ bool ishex(const char *ch) {
 	return true;
 }
 
+void print_hex(const rgb_t *rgb) {
+	uint32_t hex = rgb->r << 16 | rgb->g << 8 | rgb->b;
+	printf("#%06X", hex);
+}
+
+void print_shade(const rgb_t *rgb, uint8_t num) {
+	rgb_t shades[num];
+	hsl_t hsl = rgb_to_hsl(rgb);
+	const float x = hsl.l / num;
+	printf("\x1B[1mShades\x1B[m");
+	print_line(num*8-7);
+	printf("\n");
+	for (int i = 0; i < num; i++) {
+		hsl.l -= x;
+		shades[i] = hsl_to_rgb(&hsl);
+		print_color(&shades[i], 7);
+		if ((shades[i].r + shades[i].g + shades[i].b) == 0) {
+			break;
+		}
+		printf(" ");
+	}
+	printf("\n");
+	for (int i = 0; i < num; i++) {
+		print_hex(&shades[i]);
+		if ((shades[i].r + shades[i].g + shades[i].b) == 0) {
+			break;
+		}
+		printf(" ");
+	}
+	printf("\n");
+}
+
+void print_tint(const rgb_t *rgb, uint8_t num) {
+	rgb_t shades[num];
+	hsl_t hsl = rgb_to_hsl(rgb);
+	const float x = (1 - hsl.l) / num;
+	printf("\x1B[1mTints\x1B[m");
+	print_line(num*8-6);
+	printf("\n");
+	for (int i = 0; i < num; i++) {
+		hsl.l += x;
+		shades[i] = hsl_to_rgb(&hsl);
+		print_color(&shades[i], 7);
+		if ((shades[i].r + shades[i].g + shades[i].b) == 765) {
+			break;
+		}
+		printf(" ");
+	}
+	printf("\n");
+	for (int i = 0; i < num; i++) {
+		print_hex(&shades[i]);
+		if ((shades[i].r + shades[i].g + shades[i].b) == 765) {
+			break;
+		}
+		printf(" ");
+	}
+	printf("\n");
+}
+
 int main(int argc, char **argv) {
 
 	arguments_t arguments;
-	arguments.model = ALL;
+	arguments.model = NONE;
+	arguments.shade = false;
+	arguments.tint = false;
 	arguments.input = 0;
 
 	argp_parse(&argp, argc, argv, ARGP_NO_HELP, 0, &arguments);
@@ -56,28 +123,56 @@ int main(int argc, char **argv) {
 	if (strlen(arguments.input) != 6 || !ishex(arguments.input)) {
 		return 1;
 	}
-	uint32_t input = strtol(arguments.input, NULL, 16);
 
-	rgb_t rgb = init_rgb(input);
+	rgb_t rgb = init_rgb(strtol(arguments.input, NULL, 16));
 
+	printf("\x1B[1mColor\x1B[m");
+	print_line(74);
+	printf("\n");
+	print_color(&rgb, 7);
+	printf("\n");
+	print_hex(&rgb);
+	printf("\n");
 	switch (arguments.model) {
+		case ALL:
+			printf("\x1B[1mModels\x1B[m");
+			print_line(73);
+			printf("\n");
+			print_all(&rgb);
+			break;
 		case RGB:
+			printf("\x1B[1mModel\x1B[m");
+			print_line(74);
+			printf("\n");
 			print_rgb(&rgb);
 			break;
 		case HSL:
+			printf("\x1B[1mModel\x1B[m");
+			print_line(74);
+			printf("\n");
 			print_hsl(&rgb);
 			break;
 		case HSV:
+			printf("\x1B[1mModel\x1B[m");
+			print_line(74);
+			printf("\n");
 			print_hsv(&rgb);
 			break;
 		case CMYK:
+			printf("\x1B[1mModel\x1B[m");
+			print_line(74);
+			printf("\n");
 			print_cmyk(&rgb);
 			break;
 		default:
-			print_all(&rgb);
 			break;
 	}
-	print_color(&rgb);
+	if (arguments.shade) {
+		print_shade(&rgb, 10);
+	}
+	if (arguments.tint) {
+		print_tint(&rgb, 10);
+	}
 
 	return 0;
 }
